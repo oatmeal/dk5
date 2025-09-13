@@ -96,7 +96,6 @@
         }
         
         .reset-btn {
-            margin-top: 20px;
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
@@ -115,6 +114,17 @@
             text-align: center;
             color: #333;
             margin-bottom: 30px;
+        }
+
+        .output-box.flash {
+            background-color: #ffeb3b;
+            animation: flash 0.5s ease-in-out;
+        }
+        
+        @keyframes flash {
+            0% { background-color: #e8f4fd; }
+            50% { background-color: #ffeb3b; }
+            100% { background-color: #e8f4fd; }
         }
     </style>
 </head>
@@ -176,7 +186,7 @@
             for (let i = 0; i < m; i++) {
                 const box = document.createElement('div');
                 box.className = 'box input-box';
-                box.textContent = i + 1;
+                // box.textContent = i + 1;
                 box.onclick = () => clickInputBox(i);
                 inputRow.appendChild(box);
                 inputBoxes.push(box);
@@ -197,6 +207,12 @@
                     currentValue = 1;
                 }
                 outputBoxes[i].textContent = currentValue;
+
+                // Add flash animation
+                outputBoxes[i].classList.add('flash');
+                setTimeout(() => {
+                    outputBoxes[i].classList.remove('flash');
+                }, 500);
             });
         }
         
