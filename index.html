@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バナルヤの5文字の謎</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .box-row {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .box {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #fff;
+        }
+        
+        .output-box {
+            background-color: #e8f4fd;
+            border-color: #2196F3;
+        }
+        
+        .input-box {
+            background-color: #f5f5f5;
+            border-color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .input-box:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        
+        .input-box.highlighted {
+            background-color: #ffeb3b;
+            border-color: #ff9800;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+        
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .reset-btn:hover {
+            background-color: #45a049;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>バナルヤの5文字の謎</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="m">(文字数):</label>
+                <input type="number" id="m" value="5" min="1" max="20">
+            </div>
+            <div class="control-group">
+                <label for="n">(文字の種類の数):</label>
+                <input type="number" id="n" value="7" min="1" max="20">
+            </div>
+            <button class="reset-btn" onclick="resetGame()">ニューゲーム（ランダムにします）</button>
+        </div>
+        
+        <div class="game-area">
+            <div class="box-row" id="output-row"></div>
+            <div class="box-row" id="input-row"></div>
+        </div>
+        <hr>
+        Claude AIに作ってもらいました
+    </div>
+
+    <script>
+        let m = 5; // number of boxes
+        let n = 7; // max number
+        let outputBoxes = [];
+        let inputBoxes = [];
+        let highlightedBox = null;
+
+        function initializeGame() {
+            m = parseInt(document.getElementById('m').value);
+            n = parseInt(document.getElementById('n').value);
+            
+            // Clear existing boxes
+            document.getElementById('output-row').innerHTML = '';
+            document.getElementById('input-row').innerHTML = '';
+            
+            outputBoxes = [];
+            inputBoxes = [];
+            highlightedBox = null;
+            
+            // Create output boxes with random initial values
+            const outputRow = document.getElementById('output-row');
+            for (let i = 0; i < m; i++) {
+                const box = document.createElement('div');
+                box.className = 'box output-box';
+                box.textContent = Math.floor(Math.random() * n) + 1;
+                outputRow.appendChild(box);
+                outputBoxes.push(box);
+            }
+            
+            // Create input boxes
+            const inputRow = document.getElementById('input-row');
+            for (let i = 0; i < m; i++) {
+                const box = document.createElement('div');
+                box.className = 'box input-box';
+                box.textContent = i + 1;
+                box.onclick = () => clickInputBox(i);
+                inputRow.appendChild(box);
+                inputBoxes.push(box);
+            }
+        }
+        
+        function clickInputBox(index) {
+            // Calculate indices of boxes to increment (cyclically)
+            const leftIndex = (index - 1 + m) % m;
+            const rightIndex = (index + 1) % m;
+            const indicesToIncrement = [leftIndex, index, rightIndex];
+            
+            // Increment the output boxes
+            indicesToIncrement.forEach(i => {
+                let currentValue = parseInt(outputBoxes[i].textContent);
+                currentValue++;
+                if (currentValue > n) {
+                    currentValue = 1;
+                }
+                outputBoxes[i].textContent = currentValue;
+            });
+        }
+        
+        function resetGame() {
+            initializeGame();
+        }
+        
+        // Initialize game when page loads
+        window.onload = function() {
+            initializeGame();
+            
+            // Add event listeners for m and n inputs
+            document.getElementById('m').addEventListener('change', initializeGame);
+            document.getElementById('n').addEventListener('change', initializeGame);
+        };
+    </script>
+</body>
+</html>
